@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { 
   StyleSheet, 
@@ -347,32 +348,46 @@ export default function HomeScreen() {
         {recommendations.length > 0 && (
           <View style={styles.recommendationsContainer}>
             <Text style={styles.recommendationsTitle}>Your Boring Dates</Text>
-            {recommendations.map((rec, index) => (
-              <View key={index} style={styles.recommendationCard}>
-                {rec.photoUrl && (
-                  <Image
-                    source={resolveImageSource(rec.photoUrl)}
-                    style={styles.recommendationImage}
-                    resizeMode="cover"
-                  />
-                )}
-                <View style={styles.recommendationContent}>
-                  <Text style={styles.recommendationName}>{rec.name}</Text>
-                  <View style={styles.ratingRow}>
-                    <IconSymbol
-                      ios_icon_name="star.fill"
-                      android_material_icon_name="star"
-                      size={16}
-                      color="#FCD34D"
-                    />
-                    <Text style={styles.ratingText}>{rec.rating}</Text>
-                    <Text style={styles.priceLevelText}>{'$'.repeat(rec.priceLevel)}</Text>
+            {recommendations.map((rec, index) => {
+              const activityNumber = `${index + 1}.`;
+              const truncatedDescription = rec.description.length > 120 
+                ? `${rec.description.substring(0, 120)}...` 
+                : rec.description;
+              const priceDisplay = '$'.repeat(rec.priceLevel);
+              
+              return (
+                <View key={index} style={styles.recommendationCard}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.activityNumber}>{activityNumber}</Text>
+                    {rec.photoUrl && (
+                      <Image
+                        source={resolveImageSource(rec.photoUrl)}
+                        style={styles.recommendationImage}
+                        resizeMode="cover"
+                      />
+                    )}
                   </View>
-                  <Text style={styles.recommendationAddress}>{rec.address}</Text>
-                  <Text style={styles.recommendationDescription}>{rec.description}</Text>
+                  <View style={styles.recommendationContent}>
+                    <Text style={styles.recommendationName}>{rec.name}</Text>
+                    <View style={styles.infoRow}>
+                      <View style={styles.ratingContainer}>
+                        <IconSymbol
+                          ios_icon_name="star.fill"
+                          android_material_icon_name="star"
+                          size={14}
+                          color="#FCD34D"
+                        />
+                        <Text style={styles.ratingText}>{rec.rating}</Text>
+                      </View>
+                      <Text style={styles.separator}>•</Text>
+                      <Text style={styles.priceLevelText}>{priceDisplay}</Text>
+                    </View>
+                    <Text style={styles.recommendationAddress}>{rec.address}</Text>
+                    <Text style={styles.recommendationDescription}>{truncatedDescription}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         )}
       </ScrollView>
@@ -541,48 +556,73 @@ const styles = StyleSheet.create({
   recommendationCard: {
     backgroundColor: colors.card,
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: 12,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.border,
   },
+  cardHeader: {
+    position: 'relative',
+  },
+  activityNumber: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.background,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 8,
+    zIndex: 10,
+    overflow: 'hidden',
+  },
   recommendationImage: {
     width: '100%',
-    height: 200,
+    height: 160,
   },
   recommendationContent: {
-    padding: 16,
+    padding: 12,
   },
   recommendationName: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: colors.text,
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  ratingRow: {
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 8,
   },
   ratingText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: colors.text,
   },
-  priceLevelText: {
-    fontSize: 14,
+  separator: {
+    fontSize: 13,
     color: colors.textSecondary,
-    marginLeft: 8,
+    marginHorizontal: 6,
+  },
+  priceLevelText: {
+    fontSize: 13,
+    color: colors.textSecondary,
   },
   recommendationAddress: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textSecondary,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   recommendationDescription: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.text,
-    lineHeight: 20,
+    lineHeight: 18,
   },
 });
