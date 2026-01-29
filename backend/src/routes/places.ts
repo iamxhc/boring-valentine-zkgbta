@@ -90,7 +90,6 @@ export async function register(app: App, fastify: FastifyInstance) {
           const url = new URL('https://maps.googleapis.com/maps/api/place/autocomplete/json');
           url.searchParams.set('input', validInput.input);
           url.searchParams.set('key', googleApiKey);
-          url.searchParams.set('types', 'cities');
 
           const response = await fetch(url.toString());
 
