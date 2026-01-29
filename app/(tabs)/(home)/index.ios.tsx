@@ -194,7 +194,7 @@ export default function HomeScreen() {
                 <IconSymbol
                   ios_icon_name="person"
                   android_material_icon_name="person"
-                  size={20}
+                  size={18}
                   color={relationship === 'single' ? colors.background : colors.primary}
                 />
                 <Text style={[
@@ -216,13 +216,19 @@ export default function HomeScreen() {
                 <IconSymbol
                   ios_icon_name="heart.fill"
                   android_material_icon_name="favorite"
-                  size={20}
+                  size={18}
                   color={relationship === 'relationship' ? colors.background : colors.primary}
                 />
-                <Text style={[
-                  styles.optionText,
-                  relationship === 'relationship' && styles.optionTextActive
-                ]}>Relationship</Text>
+                <Text 
+                  style={[
+                    styles.optionText,
+                    relationship === 'relationship' && styles.optionTextActive
+                  ]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                >
+                  Relationship
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -238,7 +244,7 @@ export default function HomeScreen() {
                 <IconSymbol
                   ios_icon_name="person.3"
                   android_material_icon_name="group"
-                  size={20}
+                  size={18}
                   color={relationship === 'family' ? colors.background : colors.primary}
                 />
                 <Text style={[
@@ -487,22 +493,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 4,
     paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     backgroundColor: colors.card,
     borderWidth: 2,
     borderColor: colors.border,
     borderRadius: 12,
+    minHeight: 48,
   },
   optionButtonActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
   optionText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: colors.text,
+    flexShrink: 1,
   },
   optionTextActive: {
     color: colors.background,
