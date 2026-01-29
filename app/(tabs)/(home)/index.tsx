@@ -24,7 +24,7 @@ function resolveImageSource(source: string | number | ImageSourcePropType | unde
   return source as ImageSourcePropType;
 }
 
-type RelationshipType = 'single' | 'relationship' | 'family';
+type RelationshipType = 'single' | 'couple' | 'family';
 type TimeOption = '0-2 hours' | '2-4 hours' | 'full day';
 
 interface Recommendation {
@@ -99,7 +99,7 @@ export default function HomeScreen() {
       const { getRecommendations } = await import('@/utils/api');
       const result = await getRecommendations({
         location,
-        relationship,
+        relationship: relationship === 'couple' ? 'relationship' : relationship,
         timeAvailable,
         budget
       });
@@ -128,7 +128,7 @@ export default function HomeScreen() {
             <IconSymbol
               ios_icon_name="heart.fill"
               android_material_icon_name="favorite"
-              size={32}
+              size={28}
               color={colors.primary}
               style={styles.logo}
             />
@@ -211,29 +211,23 @@ export default function HomeScreen() {
               <TouchableOpacity
                 style={[
                   styles.optionButton,
-                  relationship === 'relationship' && styles.optionButtonActive
+                  relationship === 'couple' && styles.optionButtonActive
                 ]}
                 onPress={() => {
-                  console.log('User selected: relationship');
-                  setRelationship('relationship');
+                  console.log('User selected: couple');
+                  setRelationship('couple');
                 }}
               >
                 <IconSymbol
                   ios_icon_name="heart.fill"
                   android_material_icon_name="favorite"
                   size={18}
-                  color={relationship === 'relationship' ? colors.background : colors.primary}
+                  color={relationship === 'couple' ? colors.background : colors.primary}
                 />
-                <Text 
-                  style={[
-                    styles.optionText,
-                    relationship === 'relationship' && styles.optionTextActive
-                  ]}
-                  numberOfLines={1}
-                  adjustsFontSizeToFit
-                >
-                  Relationship
-                </Text>
+                <Text style={[
+                  styles.optionText,
+                  relationship === 'couple' && styles.optionTextActive
+                ]}>Couple</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -434,7 +428,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   logo: {
-    marginRight: 12,
+    marginRight: 8,
   },
   title: {
     fontSize: 32,
@@ -515,9 +509,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 6,
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     backgroundColor: colors.card,
     borderWidth: 2,
     borderColor: colors.border,
@@ -529,10 +523,9 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   optionText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
-    flexShrink: 1,
   },
   optionTextActive: {
     color: colors.background,
