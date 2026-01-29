@@ -128,11 +128,11 @@ export default function HomeScreen() {
             <IconSymbol
               ios_icon_name="heart.fill"
               android_material_icon_name="favorite"
-              size={28}
+              size={26}
               color={colors.primary}
               style={styles.logo}
             />
-            <Text style={styles.title}>Boring Valentine</Text>
+            <Text style={styles.title} numberOfLines={1}>Boring Valentine</Text>
           </View>
           <Text style={styles.subtitle}>Find your perfect (boring) date</Text>
         </View>
@@ -426,14 +426,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+    maxWidth: '100%',
   },
   logo: {
     marginRight: 8,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
     color: colors.primary,
+    flexShrink: 1,
   },
   subtitle: {
     fontSize: 16,
