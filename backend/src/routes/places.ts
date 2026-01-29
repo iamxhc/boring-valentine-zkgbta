@@ -91,7 +91,6 @@ export async function register(app: App, fastify: FastifyInstance) {
           url.searchParams.set('input', validInput.input);
           url.searchParams.set('key', googleApiKey);
           url.searchParams.set('types', 'cities');
-          url.searchParams.set('components', 'country:us');
 
           const response = await fetch(url.toString());
 
