@@ -146,7 +146,7 @@ export default function HomeScreen() {
             <IconSymbol
               ios_icon_name="heart.fill"
               android_material_icon_name="favorite"
-              size={32}
+              size={28}
               color={colors.primary}
               style={styles.logo}
             />
@@ -307,7 +307,7 @@ export default function HomeScreen() {
               value={budget}
               onValueChange={setBudget}
               minimumTrackTintColor={colors.primary}
-              maximumTrackTintColor={colors.borderLight}
+              maximumTrackTintColor={colors.border}
               thumbTintColor={colors.primary}
             />
             <View style={styles.sliderLabels}>
@@ -325,7 +325,7 @@ export default function HomeScreen() {
             {loading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text style={styles.submitButtonText}>Get Started</Text>
+              <Text style={styles.submitButtonText}>Get Recommendations</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -402,8 +402,8 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginTop: 30,
-    marginBottom: 40,
+    marginTop: 20,
+    marginBottom: 30,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -412,67 +412,63 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   logo: {
-    marginRight: 10,
+    marginRight: 8,
   },
   title: {
-    fontSize: 36,
-    fontWeight: '800',
+    fontSize: 32,
+    fontWeight: '700',
     color: colors.text,
     flexShrink: 1,
-    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 17,
+    fontSize: 16,
     color: colors.textSecondary,
-    fontWeight: '500',
   },
   form: {
     width: '100%',
   },
   inputGroup: {
-    marginBottom: 28,
+    marginBottom: 24,
   },
   label: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text,
-    marginBottom: 10,
-    letterSpacing: -0.3,
+    marginBottom: 8,
   },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   budgetValue: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontSize: 18,
+    fontWeight: '700',
     color: colors.primary,
-    letterSpacing: -0.5,
   },
   input: {
-    height: 54,
+    height: 50,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 12,
-    paddingHorizontal: 18,
+    borderRadius: 8,
+    paddingHorizontal: 16,
     fontSize: 16,
     color: colors.text,
-    borderWidth: 2,
-    borderColor: colors.sketch,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   predictionsContainer: {
     marginTop: 8,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.sketch,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   predictionItem: {
-    padding: 14,
+    padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.border,
   },
   predictionText: {
     fontSize: 15,
@@ -480,17 +476,17 @@ const styles = StyleSheet.create({
   },
   optionsRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
   },
   optionButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
+    paddingVertical: 12,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.sketch,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   optionButtonActive: {
     backgroundColor: colors.primary,
@@ -498,9 +494,8 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.text,
-    letterSpacing: -0.2,
   },
   optionTextActive: {
     color: '#FFFFFF',
@@ -517,127 +512,120 @@ const styles = StyleSheet.create({
   sliderLabel: {
     fontSize: 14,
     color: colors.textSecondary,
-    fontWeight: '600',
   },
   submitButton: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,
-    paddingVertical: 18,
-    borderRadius: 12,
-    marginTop: 12,
-    borderWidth: 2,
-    borderColor: colors.sketch,
+    paddingVertical: 16,
+    borderRadius: 8,
+    marginTop: 8,
   },
   submitButtonDisabled: {
     opacity: 0.6,
   },
   submitButtonText: {
     fontSize: 18,
-    fontWeight: '800',
+    fontWeight: '700',
     color: '#FFFFFF',
-    letterSpacing: -0.3,
   },
   recommendationsContainer: {
-    marginTop: 50,
+    marginTop: 40,
   },
   recommendationsTitle: {
-    fontSize: 28,
-    fontWeight: '800',
+    fontSize: 24,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 24,
-    letterSpacing: -0.5,
+    marginBottom: 20,
   },
   recommendationCard: {
     backgroundColor: colors.card,
-    borderRadius: 16,
-    marginBottom: 24,
+    borderRadius: 12,
+    marginBottom: 20,
     overflow: 'hidden',
-    borderWidth: 2,
-    borderColor: colors.sketch,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
     position: 'relative',
   },
   numberBadge: {
     position: 'absolute',
-    top: 16,
-    left: 16,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    top: 12,
+    left: 12,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
-    borderWidth: 2,
-    borderColor: colors.sketch,
   },
   numberBadgeText: {
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '700',
     color: '#FFFFFF',
   },
   recommendationImage: {
     width: '100%',
-    height: 220,
+    height: 200,
   },
   recommendationContent: {
-    padding: 20,
+    padding: 16,
   },
   recommendationName: {
-    fontSize: 22,
-    fontWeight: '800',
+    fontSize: 20,
+    fontWeight: '700',
     color: colors.text,
-    marginBottom: 10,
-    letterSpacing: -0.5,
+    marginBottom: 8,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   ratingText: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '600',
     color: colors.text,
   },
   separator: {
-    fontSize: 15,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginHorizontal: 10,
+    marginHorizontal: 8,
   },
   priceLevelText: {
-    fontSize: 15,
+    fontSize: 14,
     color: colors.textSecondary,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   recommendationAddress: {
-    fontSize: 15,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginBottom: 14,
-    fontWeight: '500',
+    marginBottom: 12,
   },
   recommendationDescription: {
-    fontSize: 16,
+    fontSize: 15,
     color: colors.text,
-    lineHeight: 24,
+    lineHeight: 22,
   },
   funnyExplanationContainer: {
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 2,
-    borderTopColor: colors.borderLight,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   funnyExplanationLabel: {
-    fontSize: 15,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: '700',
     color: colors.primary,
-    marginBottom: 6,
-    letterSpacing: -0.2,
+    marginBottom: 4,
   },
   funnyExplanationText: {
-    fontSize: 15,
+    fontSize: 14,
     color: colors.textSecondary,
-    lineHeight: 22,
+    lineHeight: 20,
     fontStyle: 'italic',
   },
 });
