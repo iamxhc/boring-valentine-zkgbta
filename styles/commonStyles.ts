@@ -5,11 +5,11 @@ export const colors = {
   primary: '#8B5CF6',      // Purple - kept as theme color
   secondary: '#A78BFA',    // Light Purple
   accent: '#F3E8FF',       // Very Light Purple
-  background: '#FAFAFA',   // Off-white paper-like background
-  backgroundAlt: '#FFFFFF', // White
+  background: '#F5F5DC',   // Very light beige background
+  backgroundAlt: '#FEFEF8', // Off-white with beige tint
   text: '#2D2D2D',         // Dark sketch color
   textSecondary: '#6B7280', // Medium gray
-  card: '#FFFFFF',         // White cards
+  card: '#FEFEF8',         // Off-white with beige tint for cards
   border: '#2D2D2D',       // Dark sketch border
   borderLight: '#9CA3AF',  // Lighter sketch border
   highlight: '#F9FAFB',    // Very light gray

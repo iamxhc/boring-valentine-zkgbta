@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
   input: {
     height: 56,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 4,
+    borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
     color: colors.sketch,
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   predictionsContainer: {
     marginTop: 8,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 3,
     borderColor: colors.sketch,
     overflow: 'hidden',
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 14,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 3,
     borderColor: colors.sketch,
     minHeight: 52,
@@ -517,6 +517,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.sketch,
     letterSpacing: 0.5,
+    textAlign: 'center',
   },
   optionTextActive: {
     color: '#FFFFFF',
@@ -524,7 +525,7 @@ const styles = StyleSheet.create({
   sliderContainer: {
     borderWidth: 3,
     borderColor: colors.sketch,
-    borderRadius: 4,
+    borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
     backgroundColor: colors.backgroundAlt,
@@ -549,7 +550,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.primary,
     paddingVertical: 18,
-    borderRadius: 4,
+    borderRadius: 12,
     marginTop: 12,
     borderWidth: 3,
     borderColor: colors.sketch,
@@ -563,6 +564,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: 0.5,
+    textAlign: 'center',
   },
   recommendationsContainer: {
     marginTop: 48,
@@ -580,7 +582,7 @@ const styles = StyleSheet.create({
   },
   recommendationCard: {
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 4,
+    borderRadius: 12,
     marginBottom: 24,
     overflow: 'hidden',
     borderWidth: 3,
@@ -605,6 +607,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '900',
     color: '#FFFFFF',
+    textAlign: 'center',
   },
   imageContainer: {
     borderBottomWidth: 3,
