@@ -126,36 +126,34 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header with sketch-style design */}
+        {/* Header */}
         <View style={styles.header}>
           <View style={styles.titleContainer}>
             <IconSymbol
               ios_icon_name="heart.fill"
               android_material_icon_name="favorite"
-              size={32}
+              size={28}
               color={colors.primary}
               style={styles.logo}
             />
             <Text style={styles.title} numberOfLines={1}>Boring Valentine</Text>
           </View>
-          <Text style={styles.subtitle}>Find your perfect (boring) date</Text>
+          <Text style={styles.subtitle}>Find your perfect date</Text>
         </View>
 
-        {/* Form with sketch-style cards */}
+        {/* Form */}
         <View style={styles.form}>
           {/* Location Input */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>📍 Location</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter city and state"
-                placeholderTextColor={colors.textSecondary}
-                value={location}
-                onChangeText={handleLocationChange}
-                onFocus={() => location.length > 2 && setShowPredictions(true)}
-              />
-            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter city and state"
+              placeholderTextColor={colors.textSecondary}
+              value={location}
+              onChangeText={handleLocationChange}
+              onFocus={() => location.length > 2 && setShowPredictions(true)}
+            />
             
             {/* Autocomplete Predictions */}
             {showPredictions && locationPredictions.length > 0 && (
@@ -287,47 +285,41 @@ export default function HomeScreen() {
               <Text style={styles.label}>💰 Budget</Text>
               <Text style={styles.budgetValue}>{budgetDisplay}</Text>
             </View>
-            <View style={styles.sliderContainer}>
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={500}
-                step={10}
-                value={budget}
-                onValueChange={setBudget}
-                minimumTrackTintColor={colors.primary}
-                maximumTrackTintColor={colors.borderLight}
-                thumbTintColor={colors.primary}
-              />
-            </View>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={500}
+              step={10}
+              value={budget}
+              onValueChange={setBudget}
+              minimumTrackTintColor={colors.primary}
+              maximumTrackTintColor={colors.border}
+              thumbTintColor={colors.primary}
+            />
             <View style={styles.sliderLabels}>
               <Text style={styles.sliderLabel}>$0</Text>
               <Text style={styles.sliderLabel}>$500</Text>
             </View>
           </View>
 
-          {/* Submit Button - Sketch style */}
+          {/* Submit Button */}
           <TouchableOpacity
             style={[styles.submitButton, loading && styles.submitButtonDisabled]}
             onPress={handleGetRecommendations}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator color={colors.primary} />
+              <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text style={styles.submitButtonText}>Get Started</Text>
+              <Text style={styles.submitButtonText}>Get Recommendations</Text>
             )}
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>See How It Works</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Recommendations - Sketch style cards */}
+        {/* Recommendations */}
         {recommendations.length > 0 && (
           <View style={styles.recommendationsContainer}>
-            <Text style={styles.recommendationsTitle}>Your Boring Dates ✨</Text>
+            <Text style={styles.recommendationsTitle}>Your Recommendations</Text>
             {recommendations.map((rec, index) => {
               const activityNumber = `${index + 1}`;
               const truncatedDescription = rec.description.length > 120 
@@ -337,19 +329,16 @@ export default function HomeScreen() {
               
               return (
                 <View key={index} style={styles.recommendationCard}>
-                  {/* Sketch-style number badge */}
                   <View style={styles.numberBadge}>
                     <Text style={styles.numberBadgeText}>{activityNumber}</Text>
                   </View>
                   
                   {rec.photoUrl && (
-                    <View style={styles.imageContainer}>
-                      <Image
-                        source={resolveImageSource(rec.photoUrl)}
-                        style={styles.recommendationImage}
-                        resizeMode="cover"
-                      />
-                    </View>
+                    <Image
+                      source={resolveImageSource(rec.photoUrl)}
+                      style={styles.recommendationImage}
+                      resizeMode="cover"
+                    />
                   )}
                   
                   <View style={styles.recommendationContent}>
@@ -369,7 +358,7 @@ export default function HomeScreen() {
                     {/* Funny Explanation */}
                     {rec.funnyExplanation && (
                       <View style={styles.funnyExplanationContainer}>
-                        <Text style={styles.funnyExplanationLabel}>💭 Why it&apos;s funny:</Text>
+                        <Text style={styles.funnyExplanationLabel}>Why it&apos;s funny:</Text>
                         <Text style={styles.funnyExplanationText}>{rec.funnyExplanation}</Text>
                       </View>
                     )}
@@ -399,8 +388,8 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 32,
+    marginTop: 20,
+    marginBottom: 30,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -409,19 +398,17 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   logo: {
-    marginRight: 10,
+    marginRight: 8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
     color: colors.text,
     flexShrink: 1,
-    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 16,
     color: colors.textSecondary,
-    fontWeight: '400',
   },
   form: {
     width: '100%',
@@ -430,88 +417,74 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 10,
-    letterSpacing: 0.2,
+    marginBottom: 8,
   },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   budgetValue: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.primary,
   },
-  inputContainer: {
-    backgroundColor: colors.backgroundAlt,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-  },
   input: {
     height: 50,
-    fontSize: 15,
+    backgroundColor: colors.backgroundAlt,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
     color: colors.text,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   predictionsContainer: {
     marginTop: 8,
     backgroundColor: colors.backgroundAlt,
-    borderWidth: 1.5,
+    borderRadius: 8,
+    borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
     overflow: 'hidden',
   },
   predictionItem: {
-    padding: 14,
+    padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    borderBottomColor: colors.border,
   },
   predictionText: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.text,
   },
   optionsRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
   },
   optionButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 8,
     backgroundColor: colors.backgroundAlt,
-    borderWidth: 1.5,
+    borderRadius: 8,
+    borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 12,
-    minHeight: 50,
   },
   optionButtonActive: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
-    borderWidth: 1.5,
   },
   optionText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: colors.text,
   },
   optionTextActive: {
-    color: colors.primary,
-  },
-  sliderContainer: {
-    backgroundColor: colors.backgroundAlt,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    color: '#FFFFFF',
   },
   slider: {
     width: '100%',
@@ -521,46 +494,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 4,
-    paddingHorizontal: 4,
   },
   sliderLabel: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.textSecondary,
-    fontWeight: '500',
   },
   submitButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     marginTop: 8,
-    borderWidth: 1.5,
-    borderColor: colors.primary,
   },
   submitButtonDisabled: {
-    opacity: 0.5,
+    opacity: 0.6,
   },
   submitButtonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
-    color: colors.primary,
-    letterSpacing: 0.3,
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.backgroundAlt,
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginTop: 10,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
+    color: '#FFFFFF',
   },
   recommendationsContainer: {
     marginTop: 40,
@@ -570,101 +523,95 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.text,
     marginBottom: 20,
-    letterSpacing: -0.5,
   },
   recommendationCard: {
-    backgroundColor: colors.backgroundAlt,
-    borderRadius: 16,
-    marginBottom: 16,
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    marginBottom: 20,
     overflow: 'hidden',
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
     position: 'relative',
   },
   numberBadge: {
     position: 'absolute',
     top: 12,
     left: 12,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
-    borderWidth: 2,
-    borderColor: colors.backgroundAlt,
   },
   numberBadgeText: {
     fontSize: 16,
-    fontWeight: '800',
-    color: colors.backgroundAlt,
-  },
-  imageContainer: {
-    borderBottomWidth: 1.5,
-    borderBottomColor: colors.border,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   recommendationImage: {
     width: '100%',
-    height: 180,
+    height: 200,
   },
   recommendationContent: {
-    padding: 18,
+    padding: 16,
   },
   recommendationName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: colors.text,
-    marginBottom: 6,
-    letterSpacing: -0.3,
+    marginBottom: 8,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   ratingText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
   },
   separator: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginHorizontal: 6,
+    marginHorizontal: 8,
   },
   priceLevelText: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textSecondary,
     fontWeight: '600',
   },
   recommendationAddress: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginBottom: 10,
-    lineHeight: 16,
+    marginBottom: 12,
   },
   recommendationDescription: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.text,
-    lineHeight: 20,
+    lineHeight: 22,
   },
   funnyExplanationContainer: {
-    marginTop: 14,
-    paddingTop: 14,
-    borderTopWidth: 1.5,
-    borderTopColor: colors.borderLight,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   funnyExplanationLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '700',
     color: colors.primary,
-    marginBottom: 5,
+    marginBottom: 4,
   },
   funnyExplanationText: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.textSecondary,
-    lineHeight: 18,
+    lineHeight: 20,
     fontStyle: 'italic',
   },
 });
