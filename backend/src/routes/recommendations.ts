@@ -15,6 +15,7 @@ const recommendationSchema = z.object({
   name: z.string().describe('Business name'),
   description: z.string().describe('Witty, humorous description of the recommendation'),
   searchQuery: z.string().describe('Query to search for this business on Google Places'),
+  funnyExplanation: z.string().describe('A short (1-2 sentences) explanation of why this activity is funny, unexpected, or ironic for a Valentine\'s date'),
 });
 
 const recommendationsResponseSchema = z.object({
@@ -47,6 +48,7 @@ interface EnrichedRecommendation {
   rating: number;
   photoUrl: string;
   priceLevel: number;
+  funnyExplanation: string;
 }
 
 async function searchGooglePlaces(
@@ -149,6 +151,7 @@ export async function register(app: App, fastify: FastifyInstance) {
                     rating: { type: 'number' },
                     photoUrl: { type: 'string' },
                     priceLevel: { type: 'number' },
+                    funnyExplanation: { type: 'string' },
                   },
                 },
               },
@@ -198,6 +201,7 @@ For each recommendation, provide:
 - name: A creative, specific type of business or venue
 - description: A witty, humorous description of why this would be a great (and funny) date
 - searchQuery: A simple Google Places search query to find this type of business in the area (e.g., "pizza restaurant", "vintage bookstore", "escape room")
+- funnyExplanation: A short (1-2 sentences) explanation of why this activity is funny, unexpected, or ironic for a Valentine's date (e.g., "Because nothing says romance like watching other people's relationships fall apart in real-time" or "Who needs candlelit dinners when you can bond over competitive vegetable shopping?")
 
 Examples of funny, unexpected venues: quirky museums, unusual restaurants, vintage shops, hidden parks, food truck parks, comedy clubs, axe throwing venues, pottery studios, karaoke bars, plant nurseries, board game cafés, etc.`;
 
@@ -241,6 +245,7 @@ Examples of funny, unexpected venues: quirky museums, unusual restaurants, vinta
               rating: placeResult.rating || 0,
               photoUrl,
               priceLevel: placeResult.price_level || 0,
+              funnyExplanation: rec.funnyExplanation,
             });
 
             app.logger.debug(
@@ -261,6 +266,7 @@ Examples of funny, unexpected venues: quirky museums, unusual restaurants, vinta
               rating: 0,
               photoUrl: 'https://via.placeholder.com/400x300?text=Recommendation',
               priceLevel: 0,
+              funnyExplanation: rec.funnyExplanation,
             });
 
             app.logger.warn({ name: rec.name }, 'Using fallback data for recommendation');
