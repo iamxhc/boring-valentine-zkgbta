@@ -34,6 +34,7 @@ interface Recommendation {
   rating: number;
   photoUrl: string;
   priceLevel: number;
+  funnyExplanation: string;
 }
 
 interface LocationPrediction {
@@ -388,6 +389,14 @@ export default function HomeScreen() {
                     </View>
                     <Text style={styles.recommendationAddress}>{rec.address}</Text>
                     <Text style={styles.recommendationDescription}>{truncatedDescription}</Text>
+                    
+                    {/* Funny Explanation */}
+                    {rec.funnyExplanation && (
+                      <View style={styles.funnyExplanationContainer}>
+                        <Text style={styles.funnyExplanationLabel}>Why it&apos;s funny:</Text>
+                        <Text style={styles.funnyExplanationText}>{rec.funnyExplanation}</Text>
+                      </View>
+                    )}
                   </View>
                 </View>
               );
@@ -619,5 +628,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.text,
     lineHeight: 18,
+  },
+  funnyExplanationContainer: {
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  funnyExplanationLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primary,
+    marginBottom: 4,
+  },
+  funnyExplanationText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    lineHeight: 16,
+    fontStyle: 'italic',
   },
 });

@@ -58,6 +58,7 @@ export interface Recommendation {
   rating: number;
   photoUrl: string;
   priceLevel: number;
+  funnyExplanation: string;
 }
 
 export interface RecommendationsResponse {
