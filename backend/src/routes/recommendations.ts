@@ -8,7 +8,11 @@ const recommendationRequestSchema = z.object({
   location: z.string().min(1, 'Location is required'),
   relationship: z.enum(['single', 'relationship', 'family']),
   timeAvailable: z.enum(['0-2 hours', '2-4 hours', 'full day']),
-  budget: z.number().min(0).max(500),
+  minBudget: z.number().min(0).max(500),
+  maxBudget: z.number().min(0).max(500),
+}).refine((data) => data.minBudget <= data.maxBudget, {
+  message: 'minBudget must be less than or equal to maxBudget',
+  path: ['minBudget'],
 });
 
 const recommendationSchema = z.object({
@@ -51,10 +55,18 @@ interface EnrichedRecommendation {
   funnyExplanation: string;
 }
 
+function budgetToPriceLevel(budget: number): number {
+  if (budget <= 50) return 1;
+  if (budget <= 150) return 2;
+  if (budget <= 300) return 3;
+  return 4;
+}
+
 async function searchGooglePlaces(
   query: string,
   location: string,
-  budget: number
+  minBudget: number,
+  maxBudget: number
 ): Promise<GooglePlacesSearchResult | null> {
   const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
@@ -74,6 +86,12 @@ async function searchGooglePlaces(
     const searchUrl = new URL('https://maps.googleapis.com/maps/api/place/textsearch/json');
     searchUrl.searchParams.set('query', `${query} in ${location}`);
     searchUrl.searchParams.set('key', googleApiKey);
+
+    // Convert budget range to price levels
+    const minPriceLevel = budgetToPriceLevel(minBudget);
+    const maxPriceLevel = budgetToPriceLevel(maxBudget);
+    searchUrl.searchParams.set('minprice', minPriceLevel.toString());
+    searchUrl.searchParams.set('maxprice', maxPriceLevel.toString());
 
     const response = await fetch(searchUrl.toString());
 
@@ -114,7 +132,7 @@ export async function register(app: App, fastify: FastifyInstance) {
         tags: ['recommendations'],
         body: {
           type: 'object',
-          required: ['location', 'relationship', 'timeAvailable', 'budget'],
+          required: ['location', 'relationship', 'timeAvailable', 'minBudget', 'maxBudget'],
           properties: {
             location: { type: 'string', description: 'City or location for recommendations' },
             relationship: {
@@ -127,9 +145,15 @@ export async function register(app: App, fastify: FastifyInstance) {
               enum: ['0-2 hours', '2-4 hours', 'full day'],
               description: 'Time available for the date',
             },
-            budget: {
+            minBudget: {
               type: 'number',
-              description: 'Budget in dollars (0-500)',
+              description: 'Minimum budget in dollars (0-500)',
+              minimum: 0,
+              maximum: 500,
+            },
+            maxBudget: {
+              type: 'number',
+              description: 'Maximum budget in dollars (0-500)',
               minimum: 0,
               maximum: 500,
             },
@@ -161,10 +185,10 @@ export async function register(app: App, fastify: FastifyInstance) {
       },
     },
     async (request: FastifyRequest<{ Body: RecommendationRequest }>, reply: FastifyReply) => {
-      const { location, relationship, timeAvailable, budget } = request.body;
+      const { location, relationship, timeAvailable, minBudget, maxBudget } = request.body;
 
       app.logger.info(
-        { location, relationship, timeAvailable, budget },
+        { location, relationship, timeAvailable, minBudget, maxBudget },
         'Generating recommendations'
       );
 
@@ -188,7 +212,7 @@ Context:
 - Location: ${validInput.location}
 - Relationship Type: ${relationshipContext[validInput.relationship]}
 - Time Available: ${validInput.timeAvailable}
-- Budget: $${validInput.budget}
+- Budget Range: $${validInput.minBudget} - $${validInput.maxBudget}
 
 Requirements:
 1. Each recommendation should be humorous and unexpected - avoid clichés
@@ -230,7 +254,7 @@ Examples of funny, unexpected venues: quirky museums, unusual restaurants, vinta
             'Searching for business'
           );
 
-          const placeResult = await searchGooglePlaces(rec.searchQuery, validInput.location, validInput.budget);
+          const placeResult = await searchGooglePlaces(rec.searchQuery, validInput.location, validInput.minBudget, validInput.maxBudget);
 
           if (placeResult) {
             const photoUrl = placeResult.photos?.[0]?.photo_reference
@@ -281,7 +305,7 @@ Examples of funny, unexpected venues: quirky museums, unusual restaurants, vinta
         reply.status(200).send({ recommendations: enrichedRecommendations });
       } catch (error) {
         app.logger.error(
-          { err: error, location, relationship, timeAvailable, budget },
+          { err: error, location, relationship, timeAvailable, minBudget, maxBudget },
           'Failed to generate recommendations'
         );
         reply.status(500).send({ error: 'Failed to generate recommendations' });
