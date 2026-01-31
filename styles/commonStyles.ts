@@ -5,7 +5,7 @@ export const colors = {
   primary: '#8B5CF6',      // Purple - kept as theme color
   secondary: '#A78BFA',    // Light Purple
   accent: '#F3E8FF',       // Very Light Purple
-  background: '#F5F5DC',   // Very light beige background
+  background: '#FDFCF8',   // Almost white with subtle beige hint
   backgroundAlt: '#FEFEF8', // Off-white with beige tint
   text: '#2D2D2D',         // Dark sketch color
   textSecondary: '#6B7280', // Medium gray
