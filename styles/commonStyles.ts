@@ -2,17 +2,18 @@
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
 export const colors = {
-  primary: '#8B5CF6',      // Purple
+  primary: '#8B5CF6',      // Purple - kept as theme color
   secondary: '#A78BFA',    // Light Purple
   accent: '#F3E8FF',       // Very Light Purple
-  background: '#FFFFFF',   // White background
-  backgroundAlt: '#F9FAFB', // Light gray
-  text: '#1F2937',         // Dark gray for text
+  background: '#FAFAFA',   // Off-white paper-like background
+  backgroundAlt: '#FFFFFF', // White
+  text: '#2D2D2D',         // Dark sketch color
   textSecondary: '#6B7280', // Medium gray
   card: '#FFFFFF',         // White cards
-  border: '#E5E7EB',       // Border color
-  borderLight: '#F3F4F6',  // Lighter border
+  border: '#2D2D2D',       // Dark sketch border
+  borderLight: '#9CA3AF',  // Lighter sketch border
   highlight: '#F9FAFB',    // Very light gray
+  sketch: '#2D2D2D',       // Main sketch color
 };
 
 export const buttonStyles = StyleSheet.create({

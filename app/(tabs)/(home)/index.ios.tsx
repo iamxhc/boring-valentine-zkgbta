@@ -147,7 +147,7 @@ export default function HomeScreen() {
               <IconSymbol
                 ios_icon_name="heart.fill"
                 android_material_icon_name="favorite"
-                size={28}
+                size={32}
                 color={colors.primary}
                 style={styles.logo}
               />
@@ -300,17 +300,19 @@ export default function HomeScreen() {
                 <Text style={styles.label}>💰 Budget</Text>
                 <Text style={styles.budgetValue}>{budgetDisplayText}</Text>
               </View>
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={500}
-                step={10}
-                value={budget}
-                onValueChange={setBudget}
-                minimumTrackTintColor={colors.primary}
-                maximumTrackTintColor={colors.border}
-                thumbTintColor={colors.primary}
-              />
+              <View style={styles.sliderContainer}>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={500}
+                  step={10}
+                  value={budget}
+                  onValueChange={setBudget}
+                  minimumTrackTintColor={colors.primary}
+                  maximumTrackTintColor={colors.borderLight}
+                  thumbTintColor={colors.primary}
+                />
+              </View>
               <View style={styles.sliderLabels}>
                 <Text style={styles.sliderLabel}>$0</Text>
                 <Text style={styles.sliderLabel}>$500</Text>
@@ -349,17 +351,20 @@ export default function HomeScreen() {
                     </View>
                     
                     {rec.photoUrl && (
-                      <Image
-                        source={resolveImageSource(rec.photoUrl)}
-                        style={styles.recommendationImage}
-                        resizeMode="cover"
-                      />
+                      <View style={styles.imageContainer}>
+                        <Image
+                          source={resolveImageSource(rec.photoUrl)}
+                          style={styles.recommendationImage}
+                          resizeMode="cover"
+                        />
+                      </View>
                     )}
                     
                     <View style={styles.recommendationContent}>
                       <Text style={styles.recommendationName}>{rec.name}</Text>
                       <View style={styles.infoRow}>
-                        <Text style={styles.ratingText}>⭐ {rec.rating}</Text>
+                        <Text style={styles.ratingText}>⭐</Text>
+                        <Text style={styles.ratingNumber}>{rec.rating}</Text>
                         {rec.priceLevel > 0 && (
                           <React.Fragment>
                             <Text style={styles.separator}>•</Text>
@@ -404,8 +409,12 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 30,
+    marginTop: 24,
+    marginBottom: 32,
+    paddingBottom: 20,
+    borderBottomWidth: 3,
+    borderBottomColor: colors.sketch,
+    borderStyle: 'dashed',
   },
   titleContainer: {
     flexDirection: 'row',
@@ -414,81 +423,90 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   logo: {
-    marginRight: 8,
+    marginRight: 10,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: colors.text,
+    fontSize: 34,
+    fontWeight: '900',
+    color: colors.sketch,
     flexShrink: 1,
+    letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 16,
     color: colors.textSecondary,
+    fontWeight: '500',
+    letterSpacing: 0.5,
   },
   form: {
     width: '100%',
   },
   inputGroup: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: 8,
+    fontSize: 17,
+    fontWeight: '800',
+    color: colors.sketch,
+    marginBottom: 10,
+    letterSpacing: 0.3,
   },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   budgetValue: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '900',
     color: colors.primary,
+    letterSpacing: -0.5,
   },
   input: {
-    height: 50,
+    height: 56,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 8,
+    borderRadius: 4,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: colors.text,
-    borderWidth: 1,
-    borderColor: colors.border,
+    color: colors.sketch,
+    borderWidth: 3,
+    borderColor: colors.sketch,
+    fontWeight: '500',
   },
   predictionsContainer: {
     marginTop: 8,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 4,
+    borderWidth: 3,
+    borderColor: colors.sketch,
     overflow: 'hidden',
   },
   predictionItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    padding: 14,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.borderLight,
+    borderStyle: 'dashed',
   },
   predictionText: {
     fontSize: 15,
-    color: colors.text,
+    color: colors.sketch,
+    fontWeight: '500',
   },
   optionsRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 12,
   },
   optionButton: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
+    paddingVertical: 14,
     backgroundColor: colors.backgroundAlt,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: 4,
+    borderWidth: 3,
+    borderColor: colors.sketch,
+    minHeight: 52,
   },
   optionButtonActive: {
     backgroundColor: colors.primary,
@@ -496,11 +514,20 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 15,
-    fontWeight: '600',
-    color: colors.text,
+    fontWeight: '800',
+    color: colors.sketch,
+    letterSpacing: 0.5,
   },
   optionTextActive: {
     color: '#FFFFFF',
+  },
+  sliderContainer: {
+    borderWidth: 3,
+    borderColor: colors.sketch,
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: colors.backgroundAlt,
   },
   slider: {
     width: '100%',
@@ -509,125 +536,150 @@ const styles = StyleSheet.create({
   sliderLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: 8,
+    paddingHorizontal: 4,
   },
   sliderLabel: {
     fontSize: 14,
     color: colors.textSecondary,
+    fontWeight: '700',
   },
   submitButton: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 8,
-    marginTop: 8,
+    paddingVertical: 18,
+    borderRadius: 4,
+    marginTop: 12,
+    borderWidth: 3,
+    borderColor: colors.sketch,
+    minHeight: 60,
   },
   submitButtonDisabled: {
     opacity: 0.6,
   },
   submitButtonText: {
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '900',
     color: '#FFFFFF',
+    letterSpacing: 0.5,
   },
   recommendationsContainer: {
-    marginTop: 40,
+    marginTop: 48,
+    paddingTop: 24,
+    borderTopWidth: 3,
+    borderTopColor: colors.sketch,
+    borderStyle: 'dashed',
   },
   recommendationsTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 20,
+    fontSize: 28,
+    fontWeight: '900',
+    color: colors.sketch,
+    marginBottom: 24,
+    letterSpacing: -0.5,
   },
   recommendationCard: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    marginBottom: 20,
+    backgroundColor: colors.backgroundAlt,
+    borderRadius: 4,
+    marginBottom: 24,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 3,
+    borderColor: colors.sketch,
     position: 'relative',
   },
   numberBadge: {
     position: 'absolute',
-    top: 12,
-    left: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    top: 16,
+    left: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
+    borderWidth: 3,
+    borderColor: colors.sketch,
   },
   numberBadgeText: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '900',
     color: '#FFFFFF',
+  },
+  imageContainer: {
+    borderBottomWidth: 3,
+    borderBottomColor: colors.sketch,
   },
   recommendationImage: {
     width: '100%',
     height: 200,
   },
   recommendationContent: {
-    padding: 16,
+    padding: 18,
   },
   recommendationName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 8,
+    fontSize: 22,
+    fontWeight: '900',
+    color: colors.sketch,
+    marginBottom: 10,
+    letterSpacing: -0.3,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   ratingText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text,
+    fontSize: 16,
+    marginRight: 4,
+  },
+  ratingNumber: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.sketch,
   },
   separator: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textSecondary,
-    marginHorizontal: 8,
+    marginHorizontal: 10,
+    fontWeight: '900',
   },
   priceLevelText: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textSecondary,
-    fontWeight: '600',
+    fontWeight: '800',
   },
   recommendationAddress: {
     fontSize: 14,
     color: colors.textSecondary,
-    marginBottom: 12,
+    marginBottom: 14,
+    fontWeight: '500',
   },
   recommendationDescription: {
     fontSize: 15,
-    color: colors.text,
-    lineHeight: 22,
+    color: colors.sketch,
+    lineHeight: 23,
+    fontWeight: '500',
   },
   funnyExplanationContainer: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    marginTop: 16,
+    paddingTop: 16,
+    borderTopWidth: 2,
+    borderTopColor: colors.borderLight,
+    borderStyle: 'dashed',
   },
   funnyExplanationLabel: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '900',
     color: colors.primary,
-    marginBottom: 4,
+    marginBottom: 6,
+    letterSpacing: 0.3,
   },
   funnyExplanationText: {
     fontSize: 14,
     color: colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 21,
     fontStyle: 'italic',
+    fontWeight: '500',
   },
 });
