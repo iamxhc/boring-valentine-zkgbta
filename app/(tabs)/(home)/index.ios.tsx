@@ -129,8 +129,10 @@ export default function HomeScreen() {
     }
   };
 
-  // Display only the upper limit of budget
-  const budgetDisplayText = `Up to $${budget}`;
+  // Calculate budget range display
+  const minBudgetDisplay = Math.round(budget * 0.5);
+  const maxBudgetDisplay = budget;
+  const budgetRangeText = `$${minBudgetDisplay} - $${maxBudgetDisplay}`;
 
   return (
     <>
@@ -297,8 +299,8 @@ export default function HomeScreen() {
             {/* Budget Slider */}
             <View style={styles.inputGroup}>
               <View style={styles.labelRow}>
-                <Text style={styles.label}>💰 Budget</Text>
-                <Text style={styles.budgetValue}>{budgetDisplayText}</Text>
+                <Text style={styles.label}>💰 Budget Range</Text>
+                <Text style={styles.budgetValue}>{budgetRangeText}</Text>
               </View>
               <Slider
                 style={styles.slider}
