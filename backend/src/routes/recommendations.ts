@@ -214,20 +214,29 @@ Context:
 - Time Available: ${validInput.timeAvailable}
 - Budget Range: $${validInput.minBudget} - $${validInput.maxBudget}
 
+CRITICAL REQUIREMENT:
+- EXACTLY ONE of the 3 recommendations MUST be a restaurant (unexpected, quirky, or unique - NOT a typical romantic restaurant)
+- The other 2 recommendations can be any other type of activity or venue
+- Restaurant examples: 24-hour diner, food truck park, hole-in-the-wall taco joint, all-you-can-eat buffet, themed restaurant, gas station with good food, dive bar with food, ethnic hole-in-the-wall spots, cafeteria, food court, street food vendor, casual eatery
+
 Requirements:
 1. Each recommendation should be humorous and unexpected - avoid clichés
 2. Suggest actual business types or venues that could exist in any city
-3. Include specific types of businesses (restaurants, museums, parks, etc.)
-4. Make sure each recommendation fits the time constraint and budget
-5. Each should include a witty, humorous description
+3. Make sure each recommendation fits the time constraint and budget
+4. Each should include a witty, humorous description
+5. The restaurant recommendation must have a searchQuery that includes "restaurant" or a specific cuisine type to ensure Google Places returns actual restaurants
 
 For each recommendation, provide:
 - name: A creative, specific type of business or venue
 - description: A witty, humorous description of why this would be a great (and funny) date
-- searchQuery: A simple Google Places search query to find this type of business in the area (e.g., "pizza restaurant", "vintage bookstore", "escape room")
-- funnyExplanation: A short (1-2 sentences) explanation of why this activity is funny, unexpected, or ironic for a Valentine's date (e.g., "Because nothing says romance like watching other people's relationships fall apart in real-time" or "Who needs candlelit dinners when you can bond over competitive vegetable shopping?")
+- searchQuery: A simple Google Places search query to find this type of business in the area
+  * For restaurant: Use format like "pizza restaurant", "taco restaurant", "diner", "food truck", "Thai restaurant", etc.
+  * For others: Use format like "vintage bookstore", "escape room", "pottery studio", "karaoke bar", etc.
+- funnyExplanation: A short (1-2 sentences) explanation of why this activity is funny, unexpected, or ironic for a Valentine's date
 
-Examples of funny, unexpected venues: quirky museums, unusual restaurants, vintage shops, hidden parks, food truck parks, comedy clubs, axe throwing venues, pottery studios, karaoke bars, plant nurseries, board game cafés, etc.`;
+Examples of funny, unexpected venues:
+- Restaurant: "Questionable Diner" (24-hour diner), "Food Truck Alley", "That one place with mysterious meat", "Gas Station Cafe with surprisingly good food"
+- Activities: quirky museums, vintage shops, hidden parks, comedy clubs, axe throwing venues, pottery studios, karaoke bars, plant nurseries, board game cafés, escape rooms, etc.`;
 
         app.logger.debug({ prompt }, 'Sending prompt to AI');
 
