@@ -69,7 +69,8 @@ export interface RecommendationRequest {
   location: string;
   relationship: 'single' | 'relationship' | 'family';
   timeAvailable: '0-2 hours' | '2-4 hours' | 'full day';
-  budget: number;
+  minBudget: number;
+  maxBudget: number;
 }
 
 // API functions

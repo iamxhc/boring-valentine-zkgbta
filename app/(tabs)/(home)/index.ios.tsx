@@ -86,7 +86,19 @@ export default function HomeScreen() {
 
   const handleGetRecommendations = async () => {
     console.log('[USER ACTION] Get Recommendations button tapped');
-    console.log('[FORM DATA]', { location, relationship, timeAvailable, budget });
+    
+    // Calculate budget range: 50% to 100% of slider value
+    const minBudget = Math.round(budget * 0.5);
+    const maxBudget = budget;
+    
+    console.log('[FORM DATA]', { 
+      location, 
+      relationship, 
+      timeAvailable, 
+      budgetRange: `$${minBudget}-$${maxBudget}`,
+      minBudget,
+      maxBudget
+    });
     
     if (!location.trim()) {
       console.log('[VALIDATION] Location is empty');
@@ -104,7 +116,8 @@ export default function HomeScreen() {
         location,
         relationship: relationship === 'couple' ? 'relationship' : relationship,
         timeAvailable,
-        budget
+        minBudget,
+        maxBudget
       });
       console.log('[API] Received', result.recommendations.length, 'recommendations');
       setRecommendations(result.recommendations);
@@ -116,7 +129,10 @@ export default function HomeScreen() {
     }
   };
 
-  const budgetDisplay = `$${budget}`;
+  // Calculate budget range display
+  const minBudgetDisplay = Math.round(budget * 0.5);
+  const maxBudgetDisplay = budget;
+  const budgetRangeText = `$${minBudgetDisplay} - $${maxBudgetDisplay}`;
 
   return (
     <>
@@ -283,8 +299,8 @@ export default function HomeScreen() {
             {/* Budget Slider */}
             <View style={styles.inputGroup}>
               <View style={styles.labelRow}>
-                <Text style={styles.label}>💰 Budget</Text>
-                <Text style={styles.budgetValue}>{budgetDisplay}</Text>
+                <Text style={styles.label}>💰 Budget Range</Text>
+                <Text style={styles.budgetValue}>{budgetRangeText}</Text>
               </View>
               <Slider
                 style={styles.slider}
