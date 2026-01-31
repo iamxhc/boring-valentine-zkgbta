@@ -123,6 +123,89 @@ function buildPhotoUrl(photoReference: string): string {
   return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${googleApiKey}`;
 }
 
+async function searchGooglePlacesWithRetry(
+  query: string,
+  location: string,
+  minBudget: number,
+  maxBudget: number,
+  logger: any
+): Promise<GooglePlacesSearchResult | null> {
+  // First, try the exact search query
+  let result = await searchGooglePlaces(query, location, minBudget, maxBudget);
+
+  if (result) {
+    logger.debug(
+      { query, foundName: result.name, rating: result.rating },
+      'Found place with primary search'
+    );
+    return result;
+  }
+
+  logger.debug({ query }, 'Primary search returned no results, trying fallback searches');
+
+  // Define fallback queries based on common business types
+  const fallbackQueries: { [key: string]: string[] } = {
+    'escape room': ['entertainment venue', 'attraction'],
+    'karaoke bar': ['bar', 'entertainment'],
+    'pottery studio': ['art studio', 'creative space', 'hobby shop'],
+    'cooking class': ['culinary school', 'kitchen store', 'restaurant'],
+    'painting class': ['art studio', 'art gallery', 'creative space'],
+    'arcade': ['entertainment venue', 'game center'],
+    'bowling alley': ['recreation center', 'entertainment'],
+    'mini golf': ['golf course', 'recreation center'],
+    'comedy club': ['bar', 'entertainment venue', 'nightlife'],
+    'museum': ['attraction', 'cultural center'],
+    'bookstore': ['book store', 'library', 'shop'],
+    'antique shop': ['thrift store', 'vintage shop', 'shop'],
+    'yoga studio': ['fitness center', 'wellness center', 'gym'],
+    'dance studio': ['fitness center', 'entertainment venue'],
+  };
+
+  // Extract base query type and try fallbacks
+  const queryLower = query.toLowerCase();
+  let fallbacks: string[] = [];
+
+  // Find matching fallback queries
+  for (const [key, values] of Object.entries(fallbackQueries)) {
+    if (queryLower.includes(key)) {
+      fallbacks = values;
+      break;
+    }
+  }
+
+  // Try generic fallback for any query type
+  if (fallbacks.length === 0) {
+    fallbacks = ['restaurant', 'cafe', 'bar'];
+  }
+
+  // Try each fallback query
+  for (const fallbackQuery of fallbacks) {
+    logger.debug({ fallbackQuery }, 'Trying fallback search');
+    result = await searchGooglePlaces(fallbackQuery, location, minBudget, maxBudget);
+    if (result) {
+      logger.debug(
+        { fallbackQuery, foundName: result.name, rating: result.rating },
+        'Found place with fallback search'
+      );
+      return result;
+    }
+  }
+
+  // Final fallback: search for restaurants in the location
+  logger.debug('All specific searches failed, trying generic restaurant search');
+  result = await searchGooglePlaces('restaurant', location, minBudget, maxBudget);
+  if (result) {
+    logger.debug(
+      { foundName: result.name, rating: result.rating },
+      'Found generic restaurant as final fallback'
+    );
+    return result;
+  }
+
+  logger.warn({ query, location }, 'No results found even with fallback searches');
+  return null;
+}
+
 export async function register(app: App, fastify: FastifyInstance) {
   fastify.post<{ Body: RecommendationRequest }>(
     '/api/recommendations',
@@ -226,17 +309,29 @@ Requirements:
 4. Each should include a witty, humorous description
 5. The restaurant recommendation must have a searchQuery that includes "restaurant" or a specific cuisine type to ensure Google Places returns actual restaurants
 
+CRITICAL INSTRUCTION FOR SEARCHQUERY:
+The searchQuery MUST be a GENERIC, SEARCHABLE business category that Google Places can find. This is not creative - be simple and direct:
+- Instead of "The Valentine's Thrift-to-Drip Fashion Show", use searchQuery: "thrift store" or "vintage clothing store"
+- Instead of "Apocalypse Preparedness Store", use searchQuery: "outdoor gear store" or "sporting goods store"
+- Instead of "Neon Karaoke Booth", use searchQuery: "karaoke bar"
+- Instead of "Botanical Garden Cocktail Bar", use searchQuery: "bar with plants" or "lounge" or "bar"
+
+The NAME and DESCRIPTION can be creative and funny, but searchQuery must be a real, generic business type that exists in Google Places.
+
 For each recommendation, provide:
-- name: A creative, specific type of business or venue
+- name: A creative, funny name or description of a business/venue type
 - description: A witty, humorous description of why this would be a great (and funny) date
-- searchQuery: A simple Google Places search query to find this type of business in the area
-  * For restaurant: Use format like "pizza restaurant", "taco restaurant", "diner", "food truck", "Thai restaurant", etc.
-  * For others: Use format like "vintage bookstore", "escape room", "pottery studio", "karaoke bar", etc.
+- searchQuery: ONLY a simple, generic business category/type. Be literal and searchable.
+  * For restaurant: "pizza restaurant", "taco restaurant", "diner", "food truck", "Thai restaurant", "BBQ restaurant", "seafood restaurant"
+  * For activities: "escape room", "bowling alley", "mini golf", "arcade", "pottery studio", "cooking class", "painting class", "karaoke bar", "comedy club", "museum", "bookstore", "antique shop", "art gallery", "yoga studio", "dance studio"
 - funnyExplanation: A short (1-2 sentences) explanation of why this activity is funny, unexpected, or ironic for a Valentine's date
 
-Examples of funny, unexpected venues:
-- Restaurant: "Questionable Diner" (24-hour diner), "Food Truck Alley", "That one place with mysterious meat", "Gas Station Cafe with surprisingly good food"
-- Activities: quirky museums, vintage shops, hidden parks, comedy clubs, axe throwing venues, pottery studios, karaoke bars, plant nurseries, board game cafés, escape rooms, etc.`;
+Examples of how to structure recommendations:
+- Name: "The Questionable Diner", searchQuery: "diner", description: "24-hour breakfast spot", funnyExplanation: "Nothing says romance like discussing your life over questionable pancakes at 2 AM"
+- Name: "Food Truck Roulette", searchQuery: "food truck", description: "Mystery meat on wheels", funnyExplanation: "Who needs a fancy restaurant when you can eat standing up in a parking lot?"
+- Name: "Pottery Disaster", searchQuery: "pottery studio", description: "Get messy with clay", funnyExplanation: "Expect hilarious results and clay under your fingernails"
+- Name: "Escape or Die Trying", searchQuery: "escape room", description: "Solve puzzles to escape", funnyExplanation: "Test your relationship by being locked in a room together"
+- Name: "Vintage Junk Hunter", searchQuery: "antique shop", description: "Hunt for weird old stuff", funnyExplanation: "Find treasures someone else threw away decades ago"`;
 
         app.logger.debug({ prompt }, 'Sending prompt to AI');
 
@@ -258,12 +353,19 @@ Examples of funny, unexpected venues:
         const enrichedRecommendations: EnrichedRecommendation[] = [];
 
         for (const rec of object.recommendations) {
-          app.logger.debug(
+          app.logger.info(
             { name: rec.name, searchQuery: rec.searchQuery },
-            'Searching for business'
+            'Searching for business in Google Places'
           );
 
-          const placeResult = await searchGooglePlaces(rec.searchQuery, validInput.location, validInput.minBudget, validInput.maxBudget);
+          // Use retry logic to find real place data
+          const placeResult = await searchGooglePlacesWithRetry(
+            rec.searchQuery,
+            validInput.location,
+            validInput.minBudget,
+            validInput.maxBudget,
+            app.logger
+          );
 
           if (placeResult) {
             const photoUrl = placeResult.photos?.[0]?.photo_reference
@@ -281,16 +383,23 @@ Examples of funny, unexpected venues:
               funnyExplanation: rec.funnyExplanation,
             });
 
-            app.logger.debug(
+            app.logger.info(
               {
-                name: placeResult.name,
+                aiName: rec.name,
+                googleName: placeResult.name,
                 rating: placeResult.rating,
                 address: placeResult.formatted_address,
+                dataSource: 'REAL_PLACE_DATA',
               },
-              'Business found'
+              'Business enriched with real Google Places data'
             );
           } else {
-            // Fallback if Google Places search fails
+            app.logger.error(
+              { name: rec.name, searchQuery: rec.searchQuery },
+              'Failed to find business in Google Places even with retry attempts - using AI name only'
+            );
+
+            // Ultimate fallback: use AI name with location, but no real rating/photo
             enrichedRecommendations.push({
               name: rec.name,
               description: rec.description,
@@ -302,7 +411,10 @@ Examples of funny, unexpected venues:
               funnyExplanation: rec.funnyExplanation,
             });
 
-            app.logger.warn({ name: rec.name }, 'Using fallback data for recommendation');
+            app.logger.warn(
+              { name: rec.name, searchQuery: rec.searchQuery },
+              'Using fallback data - could not find in Google Places'
+            );
           }
         }
 
