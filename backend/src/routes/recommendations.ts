@@ -96,7 +96,8 @@ async function searchGooglePlaces(
     const response = await fetch(searchUrl.toString());
 
     if (!response.ok) {
-      console.error(`Google Places API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`Google Places API HTTP error: ${response.status} ${response.statusText} - ${errorText}`);
       return null;
     }
 
@@ -106,9 +107,14 @@ async function searchGooglePlaces(
       return data.results[0];
     }
 
+    if (data.status !== 'OK') {
+      console.warn(`Google Places API returned status: ${data.status} for query: ${query} in ${location}`);
+    }
+
     return null;
   } catch (error) {
-    console.error('Error searching Google Places:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Error searching Google Places for "${query}" in ${location}:`, errorMessage);
     return null;
   }
 }

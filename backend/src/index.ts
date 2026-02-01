@@ -33,6 +33,24 @@ export const app = await createApplication(schema);
 // Export App type for use in route files
 export type App = typeof app;
 
+// Verify API keys are loaded and log startup status
+const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
+const openaiApiKey = process.env.OPENAI_API_KEY;
+
+if (googleApiKey) {
+  const masked = googleApiKey.substring(0, 10) + '...' + (googleApiKey.length > 13 ? googleApiKey.substring(googleApiKey.length - 4) : '');
+  app.logger.info({ key: masked }, 'GOOGLE_PLACES_API_KEY loaded successfully');
+} else {
+  app.logger.error('GOOGLE_PLACES_API_KEY is not set - Google Places API calls will return mock data');
+}
+
+if (openaiApiKey) {
+  const masked = openaiApiKey.substring(0, 10) + '...' + (openaiApiKey.length > 13 ? openaiApiKey.substring(openaiApiKey.length - 4) : '');
+  app.logger.info({ key: masked }, 'OPENAI_API_KEY loaded successfully');
+} else {
+  app.logger.warn('OPENAI_API_KEY is not set - OpenAI API calls will fail (note: the framework gateway handles this automatically)');
+}
+
 // Register routes - add your route modules here
 // IMPORTANT: Always use registration functions to avoid circular dependency issues
 recommendationsRoutes.register(app, app.fastify);

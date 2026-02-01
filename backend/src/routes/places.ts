@@ -91,12 +91,15 @@ export async function register(app: App, fastify: FastifyInstance) {
           url.searchParams.set('input', validInput.input);
           url.searchParams.set('key', googleApiKey);
 
+          app.logger.debug({ url: url.toString().replace(googleApiKey, '[REDACTED]') }, 'Calling Google Places Autocomplete API');
+
           const response = await fetch(url.toString());
 
           if (!response.ok) {
+            const errorText = await response.text();
             app.logger.error(
-              { status: response.status, input: validInput.input },
-              'Google Places API error'
+              { status: response.status, statusText: response.statusText, errorBody: errorText, input: validInput.input },
+              'Google Places API HTTP error'
             );
             return reply.status(500).send({ error: 'Failed to fetch suggestions' });
           }
