@@ -71,15 +71,8 @@ async function searchGooglePlaces(
   const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
   if (!googleApiKey) {
-    console.warn('GOOGLE_PLACES_API_KEY not set, returning mock data');
-    return {
-      name: 'The Quirky Café',
-      place_id: 'mock_place_id_001',
-      formatted_address: '123 Main St, ' + location,
-      rating: 4.5,
-      price_level: 2,
-      photos: [{ photo_reference: 'mock_photo_001' }],
-    };
+    console.error('GOOGLE_PLACES_API_KEY not set - cannot search Google Places');
+    return null;
   }
 
   try {
@@ -287,19 +280,14 @@ Examples of funny, unexpected venues: quirky museums, unusual restaurants, vinta
               'Business found'
             );
           } else {
-            // Fallback if Google Places search fails
-            enrichedRecommendations.push({
-              name: rec.name,
-              description: rec.description,
-              placeId: `fallback_${Date.now()}_${Math.random()}`,
-              address: validInput.location,
-              rating: 0,
-              photoUrl: 'https://via.placeholder.com/400x300?text=Recommendation',
-              priceLevel: 0,
-              funnyExplanation: rec.funnyExplanation,
-            });
-
-            app.logger.warn({ name: rec.name }, 'Using fallback data for recommendation');
+            // Fail fast - don't return any recommendations if we can't get real data
+            app.logger.error(
+              { name: rec.name, searchQuery: rec.searchQuery },
+              'Failed to find business in Google Places - cannot provide recommendation without real place data'
+            );
+            throw new Error(
+              `Could not find business for recommendation: ${rec.name}. Please ensure Google Places API key is valid and has access to search results for: ${rec.searchQuery}`
+            );
           }
         }
 
@@ -310,11 +298,26 @@ Examples of funny, unexpected venues: quirky museums, unusual restaurants, vinta
 
         reply.status(200).send({ recommendations: enrichedRecommendations });
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         app.logger.error(
-          { err: error, location, relationship, timeAvailable, minBudget, maxBudget },
+          { err: errorMessage, location, relationship, timeAvailable, minBudget, maxBudget },
           'Failed to generate recommendations'
         );
-        reply.status(500).send({ error: 'Failed to generate recommendations' });
+
+        // Provide specific error messages based on what failed
+        if (errorMessage.includes('Google Places')) {
+          return reply.status(500).send({
+            error: 'Google Places API error. Please ensure the API key is configured and has valid search results.',
+          });
+        } else if (errorMessage.includes('OpenAI') || errorMessage.includes('generateObject')) {
+          return reply.status(500).send({
+            error: 'OpenAI API error. Please ensure the API key is configured.',
+          });
+        }
+
+        reply.status(500).send({
+          error: 'Failed to generate recommendations. Please try again later.',
+        });
       }
     }
   );

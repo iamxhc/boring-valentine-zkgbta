@@ -64,26 +64,10 @@ export async function register(app: App, fastify: FastifyInstance) {
         const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
         if (!googleApiKey) {
-          app.logger.warn('GOOGLE_PLACES_API_KEY not set, returning mock suggestions');
-
-          // Mock data for development
-          const mockPredictions = [
-            {
-              description: `${validInput.input}, California, USA`,
-              placeId: `mock_place_${Math.random()}`,
-            },
-            {
-              description: `${validInput.input}, Texas, USA`,
-              placeId: `mock_place_${Math.random()}`,
-            },
-            {
-              description: `${validInput.input}, New York, USA`,
-              placeId: `mock_place_${Math.random()}`,
-            },
-          ];
-
-          reply.status(200).send({ predictions: mockPredictions });
-          return;
+          app.logger.error('GOOGLE_PLACES_API_KEY environment variable is not set');
+          return reply.status(500).send({
+            error: 'Google Places API key not configured. Please contact support.',
+          });
         }
 
         try {
@@ -174,9 +158,9 @@ export async function register(app: App, fastify: FastifyInstance) {
         const googleApiKey = process.env.GOOGLE_PLACES_API_KEY;
 
         if (!googleApiKey) {
-          app.logger.warn('GOOGLE_PLACES_API_KEY not set, returning placeholder');
-          return reply.status(200).send({
-            url: 'https://via.placeholder.com/400x300?text=Photo+Not+Available',
+          app.logger.error('GOOGLE_PLACES_API_KEY environment variable is not set');
+          return reply.status(500).send({
+            error: 'Google Places API key not configured. Please contact support.',
           });
         }
 
