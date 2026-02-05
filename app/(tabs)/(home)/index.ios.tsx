@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { 
   StyleSheet, 
   View, 
@@ -46,6 +46,7 @@ export default function HomeScreen() {
   const [location, setLocation] = useState('');
   const [locationPredictions, setLocationPredictions] = useState<LocationPrediction[]>([]);
   const [showPredictions, setShowPredictions] = useState(false);
+  const [autocompleteLoading, setAutocompleteLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<LocationPrediction | null>(null);
   const [relationship, setRelationship] = useState<RelationshipType>('single');
   const [timeAvailable, setTimeAvailable] = useState<TimeOption>('2-4 hours');
@@ -53,28 +54,54 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
 
-  const handleLocationChange = async (text: string) => {
+  // Debounce timer ref
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLocationChange = useCallback((text: string) => {
     console.log('User typing location:', text);
     setLocation(text);
     setSelectedLocation(null);
     
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
     if (text.length > 2) {
-      try {
-        console.log('[API] Fetching autocomplete for:', text);
-        const { getPlaceAutocomplete } = await import('@/utils/api');
-        const result = await getPlaceAutocomplete(text);
-        console.log('[API] Autocomplete results:', result.predictions.length, 'predictions');
-        setLocationPredictions(result.predictions);
-        setShowPredictions(true);
-      } catch (error) {
-        console.error('[API] Error fetching autocomplete:', error);
-        setLocationPredictions([]);
-      }
+      // Show loading immediately
+      setAutocompleteLoading(true);
+      setShowPredictions(true);
+      
+      // Debounce the API call by 300ms
+      debounceTimerRef.current = setTimeout(async () => {
+        try {
+          console.log('[API] Fetching autocomplete for:', text);
+          const { getPlaceAutocomplete } = await import('@/utils/api');
+          const result = await getPlaceAutocomplete(text);
+          console.log('[API] Autocomplete results:', result.predictions.length, 'predictions');
+          setLocationPredictions(result.predictions);
+          setAutocompleteLoading(false);
+        } catch (error) {
+          console.error('[API] Error fetching autocomplete:', error);
+          setLocationPredictions([]);
+          setAutocompleteLoading(false);
+        }
+      }, 300);
     } else {
       setShowPredictions(false);
       setLocationPredictions([]);
+      setAutocompleteLoading(false);
     }
-  };
+  }, []);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
 
   const selectLocation = (prediction: LocationPrediction) => {
     console.log('User selected location:', prediction.description);
@@ -82,6 +109,7 @@ export default function HomeScreen() {
     setSelectedLocation(prediction);
     setShowPredictions(false);
     setLocationPredictions([]);
+    setAutocompleteLoading(false);
   };
 
   const handleGetRecommendations = async () => {
@@ -161,27 +189,45 @@ export default function HomeScreen() {
             {/* Location Input */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>📍 Location</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter city and state"
-                placeholderTextColor={colors.textSecondary}
-                value={location}
-                onChangeText={handleLocationChange}
-                onFocus={() => location.length > 2 && setShowPredictions(true)}
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter city and state"
+                  placeholderTextColor={colors.textSecondary}
+                  value={location}
+                  onChangeText={handleLocationChange}
+                  onFocus={() => location.length > 2 && setShowPredictions(true)}
+                />
+                {autocompleteLoading && (
+                  <View style={styles.inputLoadingIndicator}>
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  </View>
+                )}
+              </View>
               
               {/* Autocomplete Predictions */}
-              {showPredictions && locationPredictions.length > 0 && (
+              {showPredictions && (
                 <View style={styles.predictionsContainer}>
-                  {locationPredictions.map((prediction, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.predictionItem}
-                      onPress={() => selectLocation(prediction)}
-                    >
-                      <Text style={styles.predictionText}>{prediction.description}</Text>
-                    </TouchableOpacity>
-                  ))}
+                  {autocompleteLoading && locationPredictions.length === 0 ? (
+                    <View style={styles.predictionLoadingContainer}>
+                      <ActivityIndicator size="small" color={colors.primary} />
+                      <Text style={styles.predictionLoadingText}>Loading suggestions...</Text>
+                    </View>
+                  ) : locationPredictions.length > 0 ? (
+                    locationPredictions.map((prediction, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.predictionItem}
+                        onPress={() => selectLocation(prediction)}
+                      >
+                        <Text style={styles.predictionText}>{prediction.description}</Text>
+                      </TouchableOpacity>
+                    ))
+                  ) : !autocompleteLoading ? (
+                    <View style={styles.predictionLoadingContainer}>
+                      <Text style={styles.predictionLoadingText}>No suggestions found</Text>
+                    </View>
+                  ) : null}
                 </View>
               )}
             </View>
@@ -464,16 +510,28 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: -0.5,
   },
+  inputContainer: {
+    position: 'relative',
+  },
   input: {
     height: 56,
     backgroundColor: colors.backgroundAlt,
     borderRadius: 12,
     paddingHorizontal: 16,
+    paddingRight: 48,
     fontSize: 16,
     color: colors.sketch,
     borderWidth: 3,
     borderColor: colors.sketch,
     fontWeight: '500',
+  },
+  inputLoadingIndicator: {
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   predictionsContainer: {
     marginTop: 8,
@@ -492,6 +550,18 @@ const styles = StyleSheet.create({
   predictionText: {
     fontSize: 15,
     color: colors.sketch,
+    fontWeight: '500',
+  },
+  predictionLoadingContainer: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  predictionLoadingText: {
+    fontSize: 14,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   optionsRow: {
