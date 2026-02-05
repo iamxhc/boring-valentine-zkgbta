@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "Boring Valentine",
@@ -36,7 +37,7 @@
       "expo-router",
       "expo-web-browser"
     ],
-    "scheme": "Boring Valentine",
+    "scheme": "boringvalentine",
     "experiments": {
       "typedRoutes": true
     },
